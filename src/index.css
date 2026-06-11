@@ -1,111 +1,143 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+import { useState, useEffect } from "react"
+import axios from "axios"
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+const API = "http://127.0.0.1:8000"
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+const CATEGORIES = ["Передачи","Ведение мяча","Удары","Координация","Скорость","Игра 1v1","ОФП"]
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
+function App() {
+  const [exercises, setExercises] = useState([])
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState({
+    name: "", category: "Передачи", description: "",
+    coaching_points: "", equipment: "", difficulty: "medium",
+    age_min: 6, age_max: 14, duration_minutes: 10,
+    min_players: 4, max_players: 12
+  })
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  const loadExercises = () => {
+    axios.get(`${API}/exercises/`).then(res => setExercises(res.data))
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  useEffect(() => { loadExercises() }, [])
+
+  const handleSubmit = () => {
+    if (!form.name) return alert("Введите название!")
+    axios.post(`${API}/exercises/`, form).then(() => {
+      loadExercises()
+      setShowForm(false)
+    })
   }
-}
 
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+  const handleDelete = (id) => {
+    if (confirm("Удалить упражнение?"))
+      axios.delete(`${API}/exercises/${id}`).then(() => loadExercises())
   }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">⚽</span>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Football Coach</h1>
+            <p className="text-sm text-gray-500">Помощник детского тренера</p>
+          </div>
+        </div>
+        <button onClick={() => setShowForm(!showForm)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          {showForm ? "✕ Отмена" : "+ Добавить упражнение"}
+        </button>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-8">
+        {showForm && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6 shadow-sm">
+            <h2 className="text-lg font-semibold mb-4">Новое упражнение</h2>
+            <div className="space-y-3">
+              <input placeholder="Название упражнения" value={form.name}
+                onChange={e => setForm({...form, name: e.target.value})}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              <select value={form.category}
+                onChange={e => setForm({...form, category: e.target.value})}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              </select>
+              <textarea placeholder="Описание упражнения" value={form.description}
+                onChange={e => setForm({...form, description: e.target.value})}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-20" />
+              <input placeholder="Инвентарь (мячи, конусы...)" value={form.equipment}
+                onChange={e => setForm({...form, equipment: e.target.value})}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">Возраст от</label>
+                  <input type="number" value={form.age_min}
+                    onChange={e => setForm({...form, age_min: +e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">Возраст до</label>
+                  <input type="number" value={form.age_max}
+                    onChange={e => setForm({...form, age_max: +e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">Минут</label>
+                  <input type="number" value={form.duration_minutes}
+                    onChange={e => setForm({...form, duration_minutes: +e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                </div>
+              </div>
+              <button onClick={handleSubmit}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">
+                Сохранить упражнение
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            База упражнений
+            <span className="ml-2 bg-blue-100 text-blue-700 text-sm px-2 py-0.5 rounded-full">
+              {exercises.length}
+            </span>
+          </h2>
+        </div>
+
+        {exercises.length === 0 && (
+          <div className="text-center py-16 text-gray-400">
+            <div className="text-5xl mb-4">📋</div>
+            <p>Упражнений пока нет</p>
+            <p className="text-sm">Нажмите "+ Добавить упражнение"</p>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {exercises.map(ex => (
+            <div key={ex.id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900">{ex.name}</h3>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">📂 {ex.category}</span>
+                    <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">⏱ {ex.duration_minutes} мин</span>
+                    <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">👥 {ex.min_players}-{ex.max_players} игр</span>
+                    <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">🎂 {ex.age_min}-{ex.age_max} лет</span>
+                    {ex.equipment && <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">🎒 {ex.equipment}</span>}
+                  </div>
+                  {ex.description && <p className="text-sm text-gray-600 mt-3">{ex.description}</p>}
+                </div>
+                <button onClick={() => handleDelete(ex.id)}
+                  className="text-gray-300 hover:text-red-500 ml-4 text-lg transition-colors">🗑</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
+export default App

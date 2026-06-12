@@ -56,114 +56,110 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">⚽</span>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Football Coach</h1>
-              <p className="text-sm text-gray-500">Помощник детского тренера</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => setPage("exercises")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${page === "exercises" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}>
-              📋 Упражнения
-            </button>
-            <button onClick={() => setPage("training")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${page === "training" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}>
-              ⚡ Тренировка
-            </button>
-          </div>
+    <div>
+      <nav className="navbar navbar-dark bg-success px-4">
+        <span className="navbar-brand fw-bold">⚽ Football Coach</span>
+        <div className="d-flex gap-2">
+          <button onClick={() => setPage("exercises")}
+            className={`btn btn-sm ${page === "exercises" ? "btn-light" : "btn-outline-light"}`}>
+            Упражнения
+          </button>
+          <button onClick={() => setPage("training")}
+            className={`btn btn-sm ${page === "training" ? "btn-light" : "btn-outline-light"}`}>
+            Тренировка
+          </button>
         </div>
-      </div>
+      </nav>
 
-      <div className="max-w-3xl mx-auto px-6 py-8">
+      <div className="container mt-4" style={{maxWidth: 800}}>
 
         {page === "exercises" && (
           <>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                База упражнений
-                <span className="ml-2 bg-blue-100 text-blue-700 text-sm px-2 py-0.5 rounded-full">{exercises.length}</span>
-              </h2>
-              <button onClick={() => setShowForm(!showForm)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h4 className="mb-0">База упражнений <span className="badge bg-success">{exercises.length}</span></h4>
+              <button onClick={() => setShowForm(!showForm)} className="btn btn-success btn-sm">
                 {showForm ? "✕ Отмена" : "+ Добавить"}
               </button>
             </div>
 
             {showForm && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6 shadow-sm">
-                <h2 className="text-lg font-semibold mb-4">Новое упражнение</h2>
-                <div className="space-y-3">
-                  <input placeholder="Название" value={form.name}
-                    onChange={e => setForm({...form, name: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-                  <select value={form.category}
-                    onChange={e => setForm({...form, category: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                  <textarea placeholder="Описание" value={form.description}
-                    onChange={e => setForm({...form, description: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-20" />
-                  <input placeholder="Инвентарь" value={form.equipment}
-                    onChange={e => setForm({...form, equipment: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-                  <div className="grid grid-cols-3 gap-3">
-                    <div>
-                      <label className="text-xs text-gray-500 mb-1 block">Возраст от</label>
+              <div className="card mb-4">
+                <div className="card-body">
+                  <h5 className="card-title">Новое упражнение</h5>
+                  <div className="mb-2">
+                    <input placeholder="Название упражнения" value={form.name}
+                      onChange={e => setForm({...form, name: e.target.value})}
+                      className="form-control form-control-sm" />
+                  </div>
+                  <div className="mb-2">
+                    <select value={form.category}
+                      onChange={e => setForm({...form, category: e.target.value})}
+                      className="form-select form-select-sm">
+                      {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div className="mb-2">
+                    <textarea placeholder="Описание" value={form.description}
+                      onChange={e => setForm({...form, description: e.target.value})}
+                      className="form-control form-control-sm" rows={3} />
+                  </div>
+                  <div className="mb-2">
+                    <input placeholder="Инвентарь" value={form.equipment}
+                      onChange={e => setForm({...form, equipment: e.target.value})}
+                      className="form-control form-control-sm" />
+                  </div>
+                  <div className="row g-2 mb-3">
+                    <div className="col">
+                      <label className="form-label small">Возраст от</label>
                       <input type="number" value={form.age_min}
                         onChange={e => setForm({...form, age_min: +e.target.value})}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                        className="form-control form-control-sm" />
                     </div>
-                    <div>
-                      <label className="text-xs text-gray-500 mb-1 block">Возраст до</label>
+                    <div className="col">
+                      <label className="form-label small">Возраст до</label>
                       <input type="number" value={form.age_max}
                         onChange={e => setForm({...form, age_max: +e.target.value})}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                        className="form-control form-control-sm" />
                     </div>
-                    <div>
-                      <label className="text-xs text-gray-500 mb-1 block">Минут</label>
+                    <div className="col">
+                      <label className="form-label small">Минут</label>
                       <input type="number" value={form.duration_minutes}
                         onChange={e => setForm({...form, duration_minutes: +e.target.value})}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                        className="form-control form-control-sm" />
                     </div>
                   </div>
-                  <button onClick={handleSubmit}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">
-                    Сохранить
+                  <button onClick={handleSubmit} className="btn btn-success w-100">
+                    Сохранить упражнение
                   </button>
                 </div>
               </div>
             )}
 
             {exercises.length === 0 && (
-              <div className="text-center py-16 text-gray-400">
-                <div className="text-5xl mb-4">📋</div>
+              <div className="text-center py-5 text-muted">
+                <p className="fs-1">📋</p>
                 <p>Упражнений пока нет</p>
               </div>
             )}
 
-            <div className="space-y-3">
+            <div className="d-flex flex-column gap-3">
               {exercises.map(ex => (
-                <div key={ex.id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{ex.name}</h3>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">📂 {ex.category}</span>
-                        <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">⏱ {ex.duration_minutes} мин</span>
-                        <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">👥 {ex.min_players}-{ex.max_players}</span>
-                        <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">🎂 {ex.age_min}-{ex.age_max} лет</span>
-                        {ex.equipment && <span className="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full">🎒 {ex.equipment}</span>}
+                <div key={ex.id} className="card">
+                  <div className="card-body">
+                    <div className="d-flex justify-content-between align-items-start">
+                      <div className="flex-grow-1">
+                        <h6 className="card-title mb-2">{ex.name}</h6>
+                        <div className="d-flex flex-wrap gap-1 mb-2">
+                          <span className="badge bg-success">{ex.category}</span>
+                          <span className="badge bg-secondary">{ex.duration_minutes} мин</span>
+                          <span className="badge bg-secondary">{ex.min_players}-{ex.max_players} игроков</span>
+                          <span className="badge bg-secondary">{ex.age_min}-{ex.age_max} лет</span>
+                          {ex.equipment && <span className="badge bg-light text-dark">{ex.equipment}</span>}
+                        </div>
+                        {ex.description && <p className="card-text small text-muted mb-0">{ex.description}</p>}
                       </div>
-                      {ex.description && <p className="text-sm text-gray-600 mt-3">{ex.description}</p>}
+                      <button onClick={() => handleDelete(ex.id)} className="btn btn-link text-danger p-0 ms-2">🗑</button>
                     </div>
-                    <button onClick={() => handleDelete(ex.id)}
-                      className="text-gray-300 hover:text-red-500 ml-4 text-lg">🗑</button>
                   </div>
                 </div>
               ))}
@@ -173,64 +169,66 @@ function App() {
 
         {page === "training" && (
           <>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">⚡ Генератор тренировки</h2>
-            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6 shadow-sm">
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Возраст</label>
-                  <input type="number" value={trainForm.age}
-                    onChange={e => setTrainForm({...trainForm, age: +e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            <h4 className="mb-3">Генератор тренировки</h4>
+            <div className="card mb-4">
+              <div className="card-body">
+                <div className="row g-3 mb-3">
+                  <div className="col">
+                    <label className="form-label small">Возраст</label>
+                    <input type="number" value={trainForm.age}
+                      onChange={e => setTrainForm({...trainForm, age: +e.target.value})}
+                      className="form-control form-control-sm" />
+                  </div>
+                  <div className="col">
+                    <label className="form-label small">Игроков</label>
+                    <input type="number" value={trainForm.players}
+                      onChange={e => setTrainForm({...trainForm, players: +e.target.value})}
+                      className="form-control form-control-sm" />
+                  </div>
+                  <div className="col">
+                    <label className="form-label small">Минут</label>
+                    <input type="number" value={trainForm.duration}
+                      onChange={e => setTrainForm({...trainForm, duration: +e.target.value})}
+                      className="form-control form-control-sm" />
+                  </div>
                 </div>
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Игроков</label>
-                  <input type="number" value={trainForm.players}
-                    onChange={e => setTrainForm({...trainForm, players: +e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                <div className="mb-3">
+                  <label className="form-label small">Цели тренировки</label>
+                  <div className="d-flex flex-wrap gap-2">
+                    {GOALS.map(g => (
+                      <button key={g} onClick={() => toggleGoal(g)}
+                        className={`btn btn-sm ${trainForm.goals.includes(g) ? "btn-success" : "btn-outline-secondary"}`}>
+                        {g}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Минут</label>
-                  <input type="number" value={trainForm.duration}
-                    onChange={e => setTrainForm({...trainForm, duration: +e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-                </div>
+                <button onClick={generateTraining} disabled={generating}
+                  className="btn btn-success w-100">
+                  {generating ? "Генерируем..." : "⚡ Сгенерировать тренировку"}
+                </button>
               </div>
-              <div className="mb-4">
-                <label className="text-xs text-gray-500 mb-2 block">Цели тренировки</label>
-                <div className="flex flex-wrap gap-2">
-                  {GOALS.map(g => (
-                    <button key={g} onClick={() => toggleGoal(g)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium border ${trainForm.goals.includes(g) ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300"}`}>
-                      {g}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <button onClick={generateTraining} disabled={generating}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white py-3 rounded-lg font-medium">
-                {generating ? "Генерируем..." : "⚡ Сгенерировать тренировку"}
-              </button>
             </div>
 
             {training && (
-              <div className="space-y-4">
+              <div className="d-flex flex-column gap-3">
                 {[
-                  {key: "warmup", label: "🔥 Разминка", color: "orange"},
-                  {key: "main", label: "💪 Основная часть", color: "blue"},
-                  {key: "game", label: "🏆 Игровая часть", color: "green"},
-                  {key: "cooldown", label: "🧘 Заминка", color: "gray"}
+                  {key: "warmup", label: "🔥 Разминка"},
+                  {key: "main", label: "💪 Основная часть"},
+                  {key: "game", label: "🏆 Игровая часть"},
+                  {key: "cooldown", label: "🧘 Заминка"}
                 ].map(sec => (
-                  <div key={sec.key} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-gray-900">{sec.label}</h3>
-                      <span className="text-sm text-gray-500">{training[sec.key].duration} мин</span>
+                  <div key={sec.key} className="card border-success">
+                    <div className="card-header bg-success text-white d-flex justify-content-between">
+                      <span>{sec.label}</span>
+                      <span>{training[sec.key].duration} мин</span>
                     </div>
-                    <div className="space-y-2">
+                    <div className="card-body">
                       {training[sec.key].exercises.map((ex, i) => (
-                        <div key={i} className="bg-gray-50 rounded-lg p-3">
-                          <p className="font-medium text-sm">{ex.name}</p>
-                          <p className="text-xs text-gray-500 mt-1">⏱ {ex.duration} мин · 📂 {ex.category}</p>
-                          {ex.description && <p className="text-xs text-gray-600 mt-1">{ex.description}</p>}
+                        <div key={i} className="mb-2 p-2 bg-light rounded">
+                          <p className="fw-medium mb-1">{ex.name}</p>
+                          <p className="small text-muted mb-1">{ex.duration} мин · {ex.category}</p>
+                          {ex.description && <p className="small mb-0">{ex.description}</p>}
                         </div>
                       ))}
                     </div>
